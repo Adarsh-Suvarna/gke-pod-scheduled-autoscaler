@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up
+spec:
+  schedule: "51-59/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler_example
+              - --value=20
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-down
+spec:
+  schedule: "36-41/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler_example
+              - --value=2
+          restartPolicy: OnFailure
+      backoffLimit: 1
