@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: scale-up
+  name: weekdays-fin-pods-scale-up
 spec:
-  schedule: "51-59/1 * * * *"
+  schedule: "0 17 * * 1-5"
   jobTemplate:
     spec:
       template:
@@ -13,7 +13,67 @@ spec:
             image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
             command:
               - /export
-              - --name=scheduled_autoscaler_example
+              - --name=scheduled_autoscaler
+              - --value=70
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekdays-fin-pods-scale-down
+spec:
+  schedule: "0 0 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler
+              - --value=35
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekdays-nonfin-pods-scale-up
+spec:
+  schedule: "0 17 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler
+              - --value=40
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekdays-nonfin-pods-scale-down
+spec:
+  schedule: "0 0 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler
               - --value=20
           restartPolicy: OnFailure
       backoffLimit: 1
@@ -21,9 +81,9 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: scale-down
+  name: weekends-fin-pods-scale-up
 spec:
-  schedule: "36-41/1 * * * *"
+  schedule: "0 14 * * 6,0"
   jobTemplate:
     spec:
       template:
@@ -33,7 +93,68 @@ spec:
             image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
             command:
               - /export
-              - --name=scheduled_autoscaler_example
-              - --value=2
+              - --name=scheduled_autoscaler
+              - --value=70
           restartPolicy: OnFailure
       backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekends-fin-pods-scale-down
+spec:
+  schedule: "0 0 * * 6,0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler
+              - --value=35
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekends-nonfin-pods-scale-up
+spec:
+  schedule: "0 14 * * 6,0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler
+              - --value=40
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekends-nonfin-pods-scale-down
+spec:
+  schedule: "0 0 * * 6,0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: custom-metric-extporter
+            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            command:
+              - /export
+              - --name=scheduled_autoscaler
+              - --value=20
+          restartPolicy: OnFailure
+      backoffLimit: 1
+---

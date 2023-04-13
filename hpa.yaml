@@ -19,7 +19,7 @@ spec:
   - type: External
     external:
       metric:
-        name: custom.googleapis.com|scheduled_autoscaler_example
+        name: custom.googleapis.com|scheduled_autoscaler
       target:
           type: AverageValue
           averageValue: 1
