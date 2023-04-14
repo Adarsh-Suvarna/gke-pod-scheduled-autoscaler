@@ -278,5 +278,5 @@ Below screenshot shows the Pod counts and Cron jobs in the GCP Console.
 Note: All CronJob schedule: times are based on the timezone of the kube-controller-manager. GKE’s master follows UTC time zone and hence our cron jobs need to be readjusted to run at IST timings.
 
 ### Contact Me
- If you have any doubts on this please reach out to me. Happy Learning! :)
+ If you have any doubts on this please reach out to me. Happy Learning!
  - Adarsh Suvarna : adarshasuvarna@outlook.com
