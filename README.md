@@ -245,11 +245,12 @@ spec:
 ---
 ```
 
-This configuration specifies that the CronJobs should export the suggested Pod replicas count to a custom metric called ```custom.googleapis.com|scheduled_autoscaler``` based on the time of day.
+This configuration specifies that the CronJobs should export the suggested Pod replicas count to a custom metric called ```custom.googleapis.com|scheduled_autoscaler``` based on the time of day. Here we have created 4 jobs to scale up and scale down the pods at specific times on the weekdays and weekends.
 
-5. Check the number of nodes and HPA replicas running below command.
+5. Check the number of deployments and HPA replicas by running below commands.
 
 ```diff
+kubectl get deployments
 kubectl get hpa php-apache
 ```
 
