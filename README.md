@@ -21,7 +21,7 @@ gcloud config set compute/zone asia-south1-a
 Create the GKE cluster either using gcloud command or using GCP Console.
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/gke-1.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/gke-1.png">
   </p>
 
 ## Setting up scheduled autoscaler
@@ -39,7 +39,7 @@ kubectl wait --for=condition=available --timeout=600s deployment/custom-metrics-
 1. Create a repository in Artifact Registry and give the read permissions
 
 ```diff
-gcloud artifacts repositories create gke-scheduled-autoscaler \
+gcloud artifacts repositories create pod- \
   --repository-format=docker --location=asia-south1
 
 gcloud auth configure-docker asia-south1-docker.pkg.dev
@@ -56,7 +56,7 @@ docker push asia-south1-docker.pkg.dev/$PROJECT_ID/gke-scheduled-autoscaler/cust
 ```
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/ar-2.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/ar-2.png">
   </p>
 
 ## Deploy the application
@@ -69,7 +69,7 @@ kubectl apply -f ./gke-scheduled-autoscaler
 ```
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/vs-3.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/vs-3.png">
   </p>
 
 2.  The following listing shows the content of the file ```gke-scheduled-autoscaler/deployment.yaml```
@@ -244,25 +244,25 @@ kubectl get hpa php-apache
 We have tested the GKE Pod Autoscaling for the desired time and it was working as expected. We have tested for Pod Scale up and Pod scale down by setting up the desired time using Cron Jobs. Below screenshot shows the deployment list, where initially the Pod count set to 20 and then scale down to count of Pod set to 2 and again pod count set to 20 for the desired time.
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/cmd-4.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/cmd-4.png">
   </p>
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/cmd-5.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/cmd-5.png">
   </p>
 
 
 Below screenshot shows the Pod counts and Cron jobs in the GCP Console.
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/gcp-6.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/gcp-6.png">
   </p>
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/gcp-7.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/gcp-7.png">
   </p>
 
   <p>
-  <img src="https://github.com/Adarsh-Suvarna/gke-scheduled-autoscaler/blob/main/img/gcp-8.png">
+  <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/gcp-8.png">
   </p>
   
 Note: All CronJob schedule: times are based on the timezone of the kube-controller-manager. GKE’s master follows UTC time zone and hence our cron jobs need to be readjusted to run at IST timings.
