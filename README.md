@@ -1,10 +1,10 @@
 # Google Kubernetes Engine Pod Autoscale
 
-This section explains how we can reduce costs by deploying a scheduled autoscaler on Google Kubernetes Engine (GKE). This kind of autoscaler scales clusters up or down according to a schedule based on time of day or day of the week.
-This approach is useful in the scenarios where sharp changes in traffic patterns are well understood and we want to give hints to the autoscaler that your infrastructure is about to experience spikes.
+This section explains how we can reduce costs by deploying a scheduled autoscaler on Google Kubernetes Engine (GKE). This kind of autoscaler scales clusters up or down according to a schedule based on time of day or day of the week. This approach is useful in the scenarios where sharp changes in traffic patterns are well understood and we want to give hints to the autoscaler that your infrastructure is about to experience spikes.
+
 In this proof of concept (POC) the scheduled autoscaler consists of a set of components that work together to manage scaling based on a schedule. We have used a set of Kubernetes CronJobs to export known information about traffic patterns to a Cloud Monitoring custom metric. This data is then read by a Kubernetes Horizontal Pod Autoscaler (HPA) as input into when the HPA should scale the workload. Along with other load metrics, such as target CPU utilization, the HPA decides how to scale the replicas for a given deployment.
 
-Following sections describe the step by step process to achieve the time based Google Kubernetes Engine Pod autoscaling.
+Following sections describe the step by step process to achieve the time based Google Kubernetes Engine Pod autoscaling during week days and weekends to save the cost!
 
 ## Preparing the environment
 
@@ -35,7 +35,9 @@ gcloud container clusters create gke \
 
 ## Setting up scheduled autoscaler
 
-In this example we are using Custom Metrics - Stackdriver Adapter is an implementation of Custom Metrics API and External Metrics API using Stackdriver as a backend. Its purpose is to enable pod autoscaling based on Stackdriver custom metrics. This adapter enables Pod autoscaling based on Cloud Monitoring custom metrics. So install the Custom Metrics Cloud Monitoring adapter in the GKE cluster.
+In this example we are using Custom Metrics - Stackdriver Adapter is an implementation of Custom Metrics API and External Metrics API using Stackdriver as a backend. 
+
+Its purpose is to enable pod autoscaling based on Stackdriver custom metrics. This adapter enables Pod autoscaling based on Cloud Monitoring custom metrics. So install the Custom Metrics Cloud Monitoring adapter in the GKE cluster.
 
 ```diff
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
@@ -71,6 +73,7 @@ docker push asia-south1-docker.pkg.dev/$PROJECT_ID/gke-scheduled-autoscaler/cust
 ## Deploy the application
 
 1.  Deploy the CronJobs that export custom metrics and deploy the HPA that reads from these custom metrics.
+
 ```diff
 sed -i.bak s/PROJECT_ID/$PROJECT_ID/g ./gke-scheduled-autoscaler/scheduled-autoscale.yaml
 
@@ -153,7 +156,9 @@ spec:
           averageValue: 1
 ```
 
-This configuration specifies minReplicas to 1. This means that the workload can be scaled down to its minimum. The configuration also adds an external metric (type: External). This addition means that autoscaling is now triggered by two factors. In this multiple-metrics scenario, the HPA calculates a proposed replica count for each metric and then chooses the metric that returns the highest value. It's important to understand that a scheduled autoscaler can propose that at a given moment the Pod count should be 1. But if the actual CPU utilization is higher than expected for one Pod, the HPA creates more replicas.
+This configuration specifies minReplicas to 1. This means that the workload can be scaled down to its minimum. The configuration also adds an external metric (type: External). This addition means that autoscaling is now triggered by two factors. 
+
+In this multiple-metrics scenario, the HPA calculates a proposed replica count for each metric and then chooses the metric that returns the highest value. It's important to understand that a scheduled autoscaler can propose that at a given moment the Pod count should be 1. But if the actual CPU utilization is higher than expected for one Pod, the HPA creates more replicas.
 
 4. The following listing shows the content of the file ```gke-scheduled-autoscaler/scheduled-autoscale.yaml```
 
