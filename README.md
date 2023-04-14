@@ -63,6 +63,8 @@ docker push asia-south1-docker.pkg.dev/$PROJECT_ID/gke-scheduled-autoscaler/cust
 
 1.  Deploy the CronJobs that export custom metrics and deploy the HPA that reads from these custom metrics.
 ```diff
+sed -i.bak s/PROJECT_ID/$PROJECT_ID/g ./gke-scheduled-autoscaler/scheduled-autoscale.yaml
+
 kubectl apply -f ./gke-scheduled-autoscaler
 ```
 
@@ -159,7 +161,7 @@ spec:
         spec:
           containers:
           - name: custom-metric-extporter
-            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            image: asia-south1-docker.pkg.dev/PROJECT_ID/gke-scheduled-autoscaler/custom-metric-exporter
             command:
               - /export
               - --name=scheduled_autoscaler
@@ -179,7 +181,7 @@ spec:
         spec:
           containers:
           - name: custom-metric-extporter
-            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            image: asia-south1-docker.pkg.dev/PROJECT_ID/gke-scheduled-autoscaler/custom-metric-exporter
             command:
               - /export
               - --name=scheduled_autoscaler
@@ -199,7 +201,7 @@ spec:
         spec:
           containers:
           - name: custom-metric-extporter
-            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            image: asia-south1-docker.pkg.dev/PROJECT_ID/gke-scheduled-autoscaler/custom-metric-exporter
             command:
               - /export
               - --name=scheduled_autoscaler
@@ -219,7 +221,7 @@ spec:
         spec:
           containers:
           - name: custom-metric-extporter
-            image: asia-south1-docker.pkg.dev/icici-terraform-svc-now/gke-scheduled-autoscaler/custom-metric-exporter
+            image: asia-south1-docker.pkg.dev/PROJECT_ID/gke-scheduled-autoscaler/custom-metric-exporter
             command:
               - /export
               - --name=scheduled_autoscaler
