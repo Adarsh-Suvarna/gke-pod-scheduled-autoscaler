@@ -4,11 +4,11 @@ This section explains how we can reduce costs by deploying a scheduled autoscale
 This approach is useful in the scenarios where sharp changes in traffic patterns are well understood and we want to give hints to the autoscaler that your infrastructure is about to experience spikes.
 In this proof of concept (POC) the scheduled autoscaler consists of a set of components that work together to manage scaling based on a schedule. We have used a set of Kubernetes CronJobs to export known information about traffic patterns to a Cloud Monitoring custom metric. This data is then read by a Kubernetes Horizontal Pod Autoscaler (HPA) as input into when the HPA should scale the workload. Along with other load metrics, such as target CPU utilization, the HPA decides how to scale the replicas for a given deployment.
 
-Following sections describe the step by step process to achieve the Google Kubernetes Engine Pod autoscaling.
+Following sections describe the step by step process to achieve the time based Google Kubernetes Engine Pod autoscaling.
 
 ## Preparing the environment
 
-In the Cloud Shell, configure the Cloud project ID and the computing zone and region
+In the Cloud Shell, configure the GCP project ID, computing zone and region.
 
 ```diff
 PROJECT_ID=<PROJECT_ID>
@@ -18,7 +18,16 @@ gcloud config set compute/zone asia-south1-a
 ```
 ## Create the GKE cluster
 
-Create the GKE cluster either using gcloud command or using GCP Console.
+Create the GKE cluster either using gcloud command or using GCP Console. Below ``gcloud`` command can be used to create a GKE Cluster.
+```diff
+gcloud container clusters create gke \
+    --enable-ip-alias \
+    --release-channel=stable \
+    --machine-type=e2-standard-2 \
+    --enable-autoscaling --min-nodes=1 --max-nodes=10 \
+    --num-nodes=1 \
+    --autoscaling-profile=optimize-utilization
+```
 
   <p>
   <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/gke-1.png">
@@ -231,7 +240,7 @@ spec:
 ---
 ```
 
-This configuration specifies that the CronJobs should export the suggested Pod replicas count to a custom metric called custom.googleapis.com|scheduled_autoscaler based on the time of day.
+This configuration specifies that the CronJobs should export the suggested Pod replicas count to a custom metric called ```custom.googleapis.com|scheduled_autoscaler``` based on the time of day.
 
 5. Check the number of nodes and HPA replicas running below command.
 
@@ -265,8 +274,9 @@ Below screenshot shows the Pod counts and Cron jobs in the GCP Console.
   <img src="https://github.com/Adarsh-Suvarna/gke-pod-scheduled-autoscaler/blob/main/img/gcp-8.png">
   </p>
   
+
 Note: All CronJob schedule: times are based on the timezone of the kube-controller-manager. GKE’s master follows UTC time zone and hence our cron jobs need to be readjusted to run at IST timings.
 
 ### Contact Me
- If you have any doubts on this please reach out to me
+ If you have any doubts on this please reach out to me. Happy Learning! :)
  - Adarsh Suvarna : adarshasuvarna@outlook.com
